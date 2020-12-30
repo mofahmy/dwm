@@ -1291,7 +1291,12 @@ resizeclient(Client *c, int x, int y, int w, int h)
     {
         c->w = wc.width += c->bw * 2;
         c->h = wc.height += c->bw * 2;
-        wc.border_width = 0;
+
+        // Set no border for monocole only
+        if (&monocle == c->mon->lt[c->mon->sellt]->arrange)
+        {
+          wc.border_width = 0;
+        }
     }
 	XConfigureWindow(dpy, c->win, CWX|CWY|CWWidth|CWHeight|CWBorderWidth, &wc);
 	configure(c);
@@ -1704,12 +1709,14 @@ tile(Monitor *m)
 	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
 	if (n == 0)
 		return;
+    // Uncomment below to disable gaps for when only one window on screen
+    /*
     if(n == 1){
         c = nexttiled(m->clients);
         resize(c, m->wx, m->wy, m->ww - 2 * c->bw, m->wh - 2 * c->bw, 0);
         return;
     }
-
+    */
 
 	if (n > m->nmaster){
 		mw = m->nmaster ? m->ww * m->mfact : 0;
